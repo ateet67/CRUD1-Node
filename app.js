@@ -1,10 +1,9 @@
 require("./config/express");
+require('dotenv').config();
 const connection = require("./config/mongoose");
 const config = require("./config/config")
 
 
-const db = require("./models/tutorial.model");
-console.log(config.url);
 connection
     .connect(config.url, {
         useNewUrlParser: true,

@@ -1,7 +1,7 @@
 require("./config/express");
 require('dotenv').config();
 const connection = require("./config/mongoose");
-const config = require("./config/config")
+const config = require("./config/config");
 
 
 connection

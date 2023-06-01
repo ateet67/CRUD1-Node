@@ -7,6 +7,7 @@ exports.authorize = async (req, res, next) => {
             if (!data) {
                 return res.status(401).json({ message: "Not authorized" })
             } else {
+                req.user = data;
                 next();
             }
         })

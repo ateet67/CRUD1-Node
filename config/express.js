@@ -10,7 +10,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to bezkoder application." });
+  res.json({ message: "Welcome to CRUD 1." });
 });
 
 // require("../routes/user.routes")(app);

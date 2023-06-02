@@ -3,8 +3,7 @@ const mongoose = require("mongoose");
 const MovieSchema = mongoose.Schema(
     {
         name: String,
-        release_date: Date,
-        actors_id: { type: mongoose.Types.ObjectId, ref: 'actor' }
+        release_date: Date
     },
     { timestamps: true }
 );

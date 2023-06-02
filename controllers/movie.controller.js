@@ -1,4 +1,6 @@
+const { default: mongoose } = require("mongoose");
 const movieModel = require("../models/movie.model");
+const movieActor = require("../models/movieActor.model");
 const resCode = require("../utils/response-codes");
 
 
@@ -8,15 +10,21 @@ exports.create = async (req, res) => {
     // Create a Movie
     const movie = new movieModel({
         name: req.body.name,
-        release_date: req.body.release_date,
-        actors_id: req.body.actors_id
+        release_date: req.body.release_date
     });
 
     // Save Movie in the database
     await movie
         .save(movie)
         .then(data => {
-            res.send(data);
+            movieActor.insertMany(Array.from(req.body.actors_id).map((e) => {
+                return new movieActor({
+                    movie_id: data._id,
+                    actors_id: new mongoose.Types.ObjectId(e)
+                })
+            })).then((data2) => {
+                res.send({ movie: data, movieActor: data2 });
+            })
         })
         .catch(err => {
             res.status(resCode.SomethingWrong).send({
@@ -35,7 +43,7 @@ exports.create = async (req, res) => {
 // }
 
 exports.findAll = async (req, res) => {
-    await movieModel.find().populate('actors_id')
+    await movieModel.find()
         .then((data) => {
             res.send(data);
         })

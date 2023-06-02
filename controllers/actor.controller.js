@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const actorModel = require("../models/actor.model");
 const resCode = require("../utils/response-codes");
 
@@ -114,14 +115,34 @@ exports.deleteAll = (req, res) => {
 };
 
 exports.GetMoivesByActorId = async (req, res) => {
-    await actorModel.aggregate([{
-        $lookup: {
-            from: "movie",
-            localField: "_id",
-            foreignField: "actors_id",
-            as: "movies"
+    const result = await actorModel.aggregate([
+        {
+            $match: { _id: new mongoose.Types.ObjectId(req.params.id) }
+        },
+        // { $addFields : { "_id": { $toObjectId: "$movies" } } },
+        {
+            $lookup: {
+                from: "movieactors",
+                localField: "_id",
+                foreignField: "actors_id",
+                as: "movies"
+            }
+        },
+        {
+            $project: {
+                "movies": { "movie_id": 0 }
+            }
         }
-    }])
+        //{ $unwind: "$movies" },
+        // {
+        //     $lookup: {
+        //         from: "movies",
+        //         localField: "_id",
+        //         foreignField: "movies.movie_id",
+        //         as: "movies.movieDetail"
+        //     }
+        // }
+    ])
         .then((data) => {
             res.send(data);
         })
@@ -131,4 +152,7 @@ exports.GetMoivesByActorId = async (req, res) => {
             });
 
         });
+
+    // await res.send(actorModel.populate(result, 'movie_id'));
+    // return result;
 }

@@ -115,7 +115,7 @@ exports.deleteAll = (req, res) => {
 };
 
 exports.GetMoivesByActorId = async (req, res) => {
-    const result = await actorModel.aggregate([
+    await actorModel.aggregate([
         {
             $match: { _id: new mongoose.Types.ObjectId(req.params.id) }
         },
@@ -129,19 +129,13 @@ exports.GetMoivesByActorId = async (req, res) => {
             }
         },
         {
-            $project: {
-                "movies": { "movie_id": 0 }
+            $lookup: {
+                from: "movies",
+                localField: "movies.movie_id",
+                foreignField: "_id",
+                as: "movies"
             }
         }
-        //{ $unwind: "$movies" },
-        // {
-        //     $lookup: {
-        //         from: "movies",
-        //         localField: "_id",
-        //         foreignField: "movies.movie_id",
-        //         as: "movies.movieDetail"
-        //     }
-        // }
     ])
         .then((data) => {
             res.send(data);

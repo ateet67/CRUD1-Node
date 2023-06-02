@@ -23,5 +23,8 @@ module.exports = app => {
     // Delete all Movies
     router.delete("/", movies.deleteAll);
 
+    // Get Actors By Movie Id 
+    router.get("/GetActorsByMovieId/:id", movies.GetActorsByMovieId);
+
     app.use('/api/movies', authorize, router);
 };

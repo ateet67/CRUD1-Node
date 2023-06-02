@@ -60,7 +60,7 @@ exports.findOne = async (req, res) => {
         res.status(resCode.BadRequest).send({ message: "Please Provide id" });
         return;
     }
-    movieModel.findById(req.params.id).populate('actors_id')
+    movieModel.findById(req.params.id)
         .then((data) => {
             res.send(data);
         })
@@ -121,3 +121,13 @@ exports.deleteAll = (req, res) => {
             });
         });
 };
+
+exports.GetActorsByMovieId = async (req, res) => {
+    await movieModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(req.params.id) } },
+        { $lookup: { from: "movieactors", foreignField: "movie_id", localField: "_id", as: "actors" } },
+        { $lookup: { from: "actors", foreignField: "_id", localField: "actors.actors_id", as: "actors" } }
+    ]).then((data) => {
+        res.send(data);
+    })
+}

@@ -38,8 +38,14 @@ exports.create = async (req, res) => {
 };
 
 // Retrieve all Users from the database.
-exports.findAll = (req, res) => {
-    userModel.find()
+// $lookup: {
+//     from: 'actors',
+//     localField: '_id',
+//     foreignField: 'actors_id',
+//     as: 'actors'
+// }
+exports.findAll = async (req, res) => {
+    await userModel.find()
         .then((data) => {
             res.send(data);
         })

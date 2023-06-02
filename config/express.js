@@ -15,6 +15,8 @@ app.get("/", (req, res) => {
 
 require("../routes/user.routes")(app);
 require("../routes/auth.routes")(app);
+require("../routes/movie.routes")(app);
+require("../routes/actor.routes")(app);
 
 // for (const f of fs.readdirSync("./routes")) {
 //   require(`../routes/${f}`)(app);

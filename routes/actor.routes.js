@@ -21,10 +21,10 @@ module.exports = app => {
     router.delete("/:id", actors.delete);
 
     // Delete all Actors
-    router.delete("/", actors.deleteAll);
+    // router.delete("/", actors.deleteAll);
 
     // Get Moives By Actor Id
-    router.get("/GetMoivesByActorId/:id", actors.GetMoivesByActorId);
+    router.post("/GetMoivesByActorId/", actors.GetMoivesByActorId);
 
     app.use('/api/actors', authorize, router);
 };

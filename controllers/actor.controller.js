@@ -116,26 +116,10 @@ exports.deleteAll = (req, res) => {
 
 exports.GetMoivesByActorId = async (req, res) => {
     await actorModel.aggregate([
-        {
-            $match: { _id: new mongoose.Types.ObjectId(req.params.id) }
-        },
+        { $match: req.body.actor_id ? { _id: new mongoose.Types.ObjectId(req.body.actor_id) } : {} },
         // { $addFields : { "_id": { $toObjectId: "$movies" } } },
-        {
-            $lookup: {
-                from: "movieactors",
-                localField: "_id",
-                foreignField: "actors_id",
-                as: "movies"
-            }
-        },
-        {
-            $lookup: {
-                from: "movies",
-                localField: "movies.movie_id",
-                foreignField: "_id",
-                as: "movies"
-            }
-        }
+        { $lookup: { from: "movieactors", localField: "_id", foreignField: "actors_id", as: "movies" } },
+        { $lookup: { from: "movies", localField: "movies.movie_id", foreignField: "_id", as: "movies" } }
     ])
         .then((data) => {
             res.send(data);
@@ -144,9 +128,5 @@ exports.GetMoivesByActorId = async (req, res) => {
             res.status(resCode.SomethingWrong).send({
                 message: err.message || "Some error occurred while getting details."
             });
-
         });
-
-    // await res.send(actorModel.populate(result, 'movie_id'));
-    // return result;
 }

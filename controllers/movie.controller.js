@@ -124,7 +124,7 @@ exports.deleteAll = (req, res) => {
 
 exports.GetActorsByMovieId = async (req, res) => {
     await movieModel.aggregate([
-        { $match: { _id: new mongoose.Types.ObjectId(req.params.id) } },
+        { $match: req.body.movie_id ? { _id: new mongoose.Types.ObjectId(req.body.movie_id) } : {} },
         { $lookup: { from: "movieactors", foreignField: "movie_id", localField: "_id", as: "actors" } },
         { $lookup: { from: "actors", foreignField: "_id", localField: "actors.actors_id", as: "actors" } }
     ]).then((data) => {

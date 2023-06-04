@@ -24,7 +24,7 @@ module.exports = app => {
     router.delete("/", movies.deleteAll);
 
     // Get Actors By Movie Id 
-    router.get("/GetActorsByMovieId/:id", movies.GetActorsByMovieId);
+    router.post("/GetActorsByMovieId/", movies.GetActorsByMovieId);
 
     app.use('/api/movies', authorize, router);
 };

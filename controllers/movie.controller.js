@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const movieModel = require("../models/movie.model");
 const movieActor = require("../models/movieActor.model");
+const actorModel = require("../models/actor.model");
 const resCode = require("../utils/response-codes");
 
 
@@ -130,4 +131,31 @@ exports.GetActorsByMovieId = async (req, res) => {
     ]).then((data) => {
         res.send(data);
     })
+}
+
+exports.getMoviesByFilter = async (req, res) => {
+    await movieActor.aggregate([
+        { $lookup: { from: "actors", foreignField: "_id", localField: "actors_id", as: "actor" } },
+        { $unwind: "$actor" },
+        {
+            $match: {
+                actors_id: req.body.actors.length > 0 ? { $in: req.body.actors.map((e) => new mongoose.Types.ObjectId(e)) } : { $nin: [] },
+                "actor.gender": { $in: req.body.genders.length > 0 ? req.body.genders : ["Female", "Male"] }
+            }
+        },
+        { $lookup: { from: "movies", foreignField: "_id", localField: "movie_id", as: "mdata" } },
+        { $unwind: "$mdata" },
+        { $match: { "mdata.release_date": { $gte: new Date(req.body.from_date), $lte: new Date(req.body.to_date) } } },
+        { $group: { _id: null, movies: { $addToSet: "$mdata" } } }
+    ])
+        .then((data) => {
+            // console.log(new Date('2007-09-07'), { "2007-09-07T00:00:00.000Z": { $gte: new Date('2007-09-07') } });
+            res.status(resCode.OK).send(data);
+        })
+        .catch(err => {
+            res.status(resCode.SomethingWrong).send({
+                message:
+                    err.message || "Some error occurred while removing all Movies."
+            });
+        });
 }

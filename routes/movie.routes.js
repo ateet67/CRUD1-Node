@@ -11,6 +11,9 @@ module.exports = app => {
     // Retrieve all Movies
     router.get("/", movies.findAll);
 
+    // Retrieve all Movies
+    router.post("/getMoviesByFilter", movies.getMoviesByFilter);
+
     // Retrieve a single Movie with id
     router.get("/:id", movies.findOne);
 

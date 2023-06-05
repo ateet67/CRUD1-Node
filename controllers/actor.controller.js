@@ -111,7 +111,7 @@ exports.deleteAll = (req, res) => {
                 message:
                     err.message || "Some error occurred while removing all Actor."
             });
-        }); 9
+        });
 };
 
 exports.GetMoivesByActorId = async (req, res) => {

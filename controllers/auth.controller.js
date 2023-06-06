@@ -1,4 +1,5 @@
 const userModel = require("../models/user.model");
+const { SendMail } = require("../services/commonServices");
 const resCode = require("../utils/response-codes");
 const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
@@ -26,7 +27,7 @@ exports.login = async (req, res, next) => {
             bcrypt.compare(password, user.Password).then(function (result) {
                 if (result) {
                     let jwtSecret = process.env.JWT_SECRET;
-                    
+
                     const token = jwt.sign(
                         { id: user._id, email: user.Email },
                         jwtSecret
@@ -49,4 +50,9 @@ exports.login = async (req, res, next) => {
             error: err.message,
         })
     }
+}
+
+exports.forgotPassword = async (req, res, next) => {
+    await SendMail();
+    res.send();
 }

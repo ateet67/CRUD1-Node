@@ -1,10 +1,9 @@
 const { authorize } = require("../middleware/auth");
+const actors = require("../controllers/actor.controller");
+let router = require("express").Router();
 
 module.exports = app => {
-    const actors = require("../controllers/actor.controller");
-
-    var router = require("express").Router();
-
+    
     // Create a new Actor
     router.post("/", actors.create);
 

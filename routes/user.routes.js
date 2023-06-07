@@ -1,4 +1,5 @@
 const { authorize } = require("../middleware/auth");
+const { permit } = require("../middleware/permit");
 
 module.exports = app => {
     const users = require("../controllers/users.controller");
@@ -23,5 +24,5 @@ module.exports = app => {
     // Delete all Users
     router.delete("/", users.deleteAll);
 
-    app.use('/api/users', authorize, router);
+    app.use('/api/users', authorize, (req, res, next) => permit(req, res, next, "updateUsers"), router);
 };

@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const seeding = require("./seed");
 // const fs = require("node:fs");
 
 const app = express();
@@ -27,6 +28,7 @@ require("../routes/exrcise.routes")(app);
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
+  seeding.seeding();
   console.log(`Server is running on port ${PORT}.`);
 });
 

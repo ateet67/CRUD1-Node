@@ -18,6 +18,14 @@ const UserSchema = mongoose.Schema(
             unique: true,
             required: true
         },
+        tokens: [
+            {
+                roleToken: {
+                    type: String,
+                    required: true
+                }
+            }
+        ]
     },
     { timestamps: true }
 );

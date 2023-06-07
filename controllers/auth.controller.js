@@ -15,7 +15,7 @@ exports.login = async (req, res, next) => {
     }
 
     try {
-        const user = await userModel.findOne({ Email: email });
+        let user = await userModel.findOne({ Email: email });
         if (!user) {
             res.status(resCode.BadRequest).json({
                 message: "Login not successful",
@@ -35,6 +35,11 @@ exports.login = async (req, res, next) => {
                     res.cookie("jwt", token, {
                         httpOnly: true
                     });
+                    res.cookie("roles", user.tokens[0].roleToken, {
+                        httpOnly: true
+                    });
+                    user.roles = (jwt.decode(user.tokens[0].roleToken)).roles;
+                    user.tokens = null;
                     res.status(resCode.OK).json({
                         message: "Login successful",
                         user,

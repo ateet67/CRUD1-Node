@@ -1,12 +1,20 @@
+const jwt = require("jsonwebtoken");
 const userModel = require("../models/user.model");
 const resCode = require("../utils/response-codes");
-const bcrypt = require("bcryptjs")
+const bcrypt = require("bcryptjs");
+const { default: mongoose } = require("mongoose");
 
 
 // Create and Save a new User
 exports.create = async (req, res) => {
     bcrypt.hash(req.body.Password, 10).then(async (encpsw) => {
-        console.log(encpsw);
+        let jwtSecret = process.env.JWT_SECRET;
+
+        const token = jwt.sign(
+            { roles: req.body.roles },
+            jwtSecret
+        );
+
         // if (!req.body.Name) {
         //     res.status(400).send({ message: "Content can not be empty!" });
         //     return;
@@ -19,6 +27,11 @@ exports.create = async (req, res) => {
             Email: req.body.Email,
             Address: req.body.Address,
             Password: encpsw,
+            tokens: [
+                {
+                    roleToken: token
+                }
+            ]
         });
 
         // Save User in the database
@@ -63,8 +76,12 @@ exports.findOne = async (req, res) => {
         res.status(resCode.BadRequest).send({ message: "Please Provide id" });
         return;
     }
-    userModel.findById(req.params.id)
+    userModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(req.params.id) } },
+    ])
         .then((data) => {
+            data[0].roles = data[0].tokens && (jwt.decode(data[0].tokens[0].roleToken)).roles;
+            data[0].tokens = null;
             res.send(data);
         })
         .catch((err) => {

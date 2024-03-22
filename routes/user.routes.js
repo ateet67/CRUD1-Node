@@ -24,5 +24,5 @@ module.exports = app => {
     // Delete all Users
     router.delete("/", users.deleteAll);
 
-    app.use('/api/users', authorize, (req, res, next) => permit(req, res, next, "updateUsers"), router);
+    app.use('/api/users', authorize, router);
 };
